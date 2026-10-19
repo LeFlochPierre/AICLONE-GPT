@@ -5,12 +5,6 @@ model/*
 !model/original/.gitkeep
 !model/finetune_checkpoint/.gitkeep
 
-
-# ===========================
-# config files
-# ===========================
-config/llama3-8B/inference_config.yaml
-
 # ===========================
 # Data and checkpoints
 # ===========================

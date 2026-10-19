@@ -1,0 +1,37 @@
+# Model arguments
+model:
+  _component_: torchtune.models.llama3.llama3_8b
+
+checkpointer:
+  _component_: torchtune.utils.FullModelMetaCheckpointer
+  checkpoint_dir: model/finetune_checkpoint_8B
+  checkpoint_files: [
+    meta_model_3.pt,   # last epoch of the 4-epoch run (0-indexed)
+  ]
+  output_dir: model/finetune_checkpoint_8B
+  model_type: LLAMA3
+
+device: cuda
+dtype: fp16  # Keep half-precision to save memory
+
+seed: 42
+
+# Tokenizer arguments
+tokenizer:
+  _component_: torchtune.models.llama3.llama3_tokenizer
+  path: model/llama3-8B/original/tokenizer.model
+
+# Persona system prompt — the SAME file used by process_data.py during
+# training. chat.py prepends it as the system message of every conversation.
+system_prompt_file: data/persona/system_prompt.txt
+
+# Generation arguments
+max_seq_len: 8192      # context budget for the conversation (input side)
+max_new_tokens: 512    # max tokens generated per reply
+temperature: 0.8
+top_k: 50
+
+quantizer: null
+
+# Enable offloading to CPU to free GPU memory
+offload: true

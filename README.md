@@ -1,177 +1,178 @@
-<h1 align="center">
-  <span style="font-size: 1.5em;">🤖 Train Your Digital Twin</span> <br />
-  <span style="font-size: 1em;">Fine-Tune an AI Clone of Yourself</span>
-</h1>
+<h1 align="center">🤖 AICLONE-GPT</h1>
+<p align="center"><strong>Fine-tune an AI digital twin from your WhatsApp conversations.</strong></p>
 
 <p align="center">
-  <img src="imgs/readme_header_banner.png" alt="Create the AI CLONE banner" width="75%">
-</p>
-
-
-<p align="center">
-  <b> What if your WhatsApp messages could become the training ground for an AI that talks just like you? <br />
-  <b> This project fine-tune a large language model on your chat history to create your digital twin.</b>
+  <img src="imgs/readme_header_banner.png" alt="AICLONE-GPT banner" width="75%">
 </p>
 
 <p align="center">
-  <a href="https://pytorch.org/get-started/locally/"><img src="https://img.shields.io/badge/PyTorch-2.4+-ee4c2c?logo=pytorch&logoColor=white" alt="PyTorch"></a>
-  <a href="https://github.com/meta-llama/"><img src="https://img.shields.io/badge/Llama 3-Supported-blue?logo=meta" alt="Llama3"></a>
-  <a href="https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct"><img src="https://img.shields.io/badge/Hugging Face-Compatible-yellow?logo=huggingface&logoColor=white" alt="Hugging Face"></a>
-  <a href="https://github.com/kinggongzilla/torchtune"><img src="https://img.shields.io/badge/Torchtune-Finetuning-lightgrey?logo=meta" alt="Torchtune"></a>
+  <a href="https://pytorch.org/get-started/locally/"><img src="https://img.shields.io/badge/PyTorch-2.4%2B-ee4c2c?logo=pytorch&logoColor=white" alt="PyTorch"></a>
+  <a href="https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct"><img src="https://img.shields.io/badge/Llama%203-8B-4677c5" alt="Llama 3 8B"></a>
+  <a href="https://github.com/plefloch123/torchtune"><img src="https://img.shields.io/badge/torchtune-custom%20fork-747d8c" alt="Custom torchtune fork"></a>
 </p>
 
-<h1 align="center">🎬 Demo — Talk to Your Digital Twin</h1>
+AICLONE-GPT trains a conversational language model on exported WhatsApp messages to approximate the writing style, tone, and conversational habits of a particular person. The current implementation uses a fine-tuned **Llama 3 8B** model and a **WhatsApp-inspired local web interface**.
+
+## Demo
 
 <p align="center">
-  <img src="imgs/ChatwithAICLONE-GPT.gif" alt="AICLONE-GPT demo: chatting with your digital twin" width="80%" style="border-radius: 12px; box-shadow: 0 0 20px rgba(0,0,0,0.3);">
+  <img src="imgs/ChatwithAICLONE-GPT.gif" alt="AICLONE-GPT chat demo" width="80%">
 </p>
 
-<p align="center">
-  <i>See your <b>AI clone</b> respond in your own tone, style, and humour — all locally and privately.</i>
-</p>
+*Existing demo recording; the current chat interface has since been updated with streaming responses and additional controls.*
 
-## What This Project Does
+## Features
 
-This repository lets you fine-tune a conversational LLM (Llama 3 or Mistral 7B) on your own WhatsApp conversations.
-The goal? To create an AI clone that mirrors your tone, humour, quirks, and personality.
+- **WhatsApp preprocessing:** Convert exported `.txt` conversations into ShareGPT-style training data.
+- **QLoRA fine-tuning:** Adapt Llama 3 8B to a personal conversation style using a customised torchtune fork.
+- **Interactive chat:** Send messages in a WhatsApp-style browser interface with progressively generated replies and animated typing indicators.
+- **Conversation controls:** Stop generation, regenerate the last answer, start a new chat, copy messages, and export a conversation.
+- **Display options:** Timestamps, adjustable sampling temperature, responsive layout, and light/dark mode.
+- **Local inference:** The app runs on your own GPU/server; the web UI is accessed locally or through an SSH tunnel.
 
-### Core Components
+> The interface is inspired by WhatsApp; it is **not connected to WhatsApp** and does not send or receive messages through the WhatsApp service. Conversation state is held by the running server and is lost when it restarts unless exported.
 
-- **Chat preprocessing:** Transform WhatsApp `.txt` exports into structured, model-ready datasets.  
-- **QLoRA finetuning:** Efficiently fine-tune massive models on GPUs.  
-- **Conversational interface:** Talk to your digital twin directly from the terminal/Gradio.
-
-> 💭 *Think of it as ChatGPT — but it’s you.*
-
-**Supported base models**
-- [Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct)  
-- [Mistral-7B-Instruct-v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
-
-Both models can be fine-tuned using QLoRA adapters, drastically reducing memory usage while preserving performance.
-
----
-
-## ⚙️ Getting Started
+## Getting started
 
 ### 1. Clone the repository
+
 ```bash
-git clone --recurse-submodules git@github.com:plefloch123/AICLONE-GPT.git
+git clone --recurse-submodules git@github.com:LeFlochPierre/AICLONE-GPT.git
 cd AICLONE-GPT
 ```
 
-### 2. Install Dependencies
+The `torchtune/` submodule points to a customised fork. The SSH clone command requires GitHub SSH access.
 
-Ensure you have **PyTorch ≥ 2.4** installed ([installation guide](https://pytorch.org/get-started/locally/)).
+### 2. Set up the environment
 
-Then install the **Torchtune** fine-tuning framework:
+Use a Python 3.10 environment with a CUDA-capable PyTorch installation matching your GPU and driver. The working development environment used PyTorch 2.6.0+cu118 and a customised torchtune installation; newer upstream torchtune APIs are **not** interchangeable with this code without testing.
 
 ```bash
-cd torchtune
-pip install .
-cd ..
+conda activate AICLONE  # if you have already created this environment
+pip install -r requirements.txt
+pip install -e ./torchtune
 ```
-Note that slight modifications to the torchtune library ChatDataset class code were necessary, hence we're not installing from the official repo.
 
-### 3. Downloading the base model
-### 🔹 Llama3
-Run ```tune download meta-llama/Meta-Llama-3-8B-Instruct --output-dir model/llama3 --hf-token <HF_TOKEN>```. Replace <HF_TOKEN> with your hugging face access token. In order to download Llama3 you first need to request access on the Meta Llama3 Huggingface page.
+The local project also contains `environment.yml` as an alternative environment specification. Review the dependency versions before modifying an already working installation; do not indiscriminately upgrade torchtune.
 
-### 🔹 Mistral
-Run ```tune download mistralai/Mistral-7B-Instruct-v0.2 --output-dir model/mistral```. 
+### 3. Download the base model
 
-If you downloaded the model in another format (e.g. safetensors), please adjust the checkpoint_files in ```mistral/qlora_train_config.yaml```.
-Adjust parameters like learning rate, epochs, and batch size inside the config file for better personalisation.
+First, request access to [Meta Llama 3 8B Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct), if required.
 
-### 4. Obtaining and preprocessing your WhatsApp chats
-To prepare your WhatsApp chats for training, follow these steps:
-
-1. **Export your WhatsApp chats** as .txt files. 
-    - On your phone, open a chat → tap **⋮ → More → Export Chat → Without Media**.
-    - You can export one or multiple chats — each will produce its own `.txt` file.
-2.  **Move the exported files** to: ```data/unformatted_text```. 
-3.  **Preprocess your chats**
-Run the all-in-one preprocessing script:
 ```bash
-python process_data.py "Your Name"
+tune download meta-llama/Meta-Llama-3-8B-Instruct \
+  --output-dir model/llama3-8B/original \
+  --hf-token YOUR_HF_TOKEN
 ```
-Replace ```"Your Name"``` with how your name appears in the chat exports.
 
-## 🧠 Fine-Tuning Your Model
+Ensure the checkpoint filename and tokenizer paths match the entries in `config/llama3-8B/qlora_train_config.yaml`. The exact file layout may depend on the torchtune download command/version.
 
-Once your chat data is ready, it’s time to fine-tune your model using QLoRA!
+### 4. Prepare your WhatsApp data
 
-### Llama3
-Run ```tune run lora_finetune_single_device --config config/llama3/qlora_train_config.yaml```
+1. Export chats as plain text **without media** from WhatsApp.
+2. Place the exported `.txt` files in `data/unformatted_text/`.
+3. Run the preprocessing script with your display name as it appears in the exports:
 
-### Mistral
-Run ```tune run lora_finetune_single_device --config config/mistral/qlora_train_config.yaml```
+```bash
+python process_data.py "Your WhatsApp Name"
+```
 
-You can adjust hyperparameters like learning rate, batch size, and epochs directly inside the YAML config files.
+This produces normalized text in `data/raw_data/` and ShareGPT-style JSON files in `data/preprocessed/`. Messages attributed to your display name are labelled as assistant responses during preprocessing.
 
-## 🗣️ Chatting With Your AI Clone
+The current parser expects date-prefixed lines in the form `DD/MM/YYYY, HH:MM - Name: Message`. If your export uses a different format, adjust the regex in `process_data.py`.
 
-After training, you can start talking to your digital twin.
+**Privacy:** WhatsApp exports can contain other people's personal messages. Obtain appropriate consent before using or sharing conversation data. The repository excludes local training data and model weights; do not commit personal chat exports, credentials, or private persona prompts.
 
-### Llama3
-Run ```python chat.py --config config/llama3/inference_config.yaml```
+## Fine-tuning
 
-You can define your own system prompt by changing the ```prompt``` string in the ```config/llama3/inference_config.py``` file.
+The Llama 3 8B QLoRA training configuration is located at `config/llama3-8B/qlora_train_config.yaml`.
 
-### Mistral
-For mistral to fit onto 24GB I first had to quantize the trained model. 
+```bash
+tune run lora_finetune_single_device \
+  --config config/llama3-8B/qlora_train_config.yaml
+```
 
-1. Run ```tune run quantize --config config/mistral/quantization.yaml```
-2. Run ```tune run chat.py --config config/mistral/inference_config.yaml```
+Review the training config for checkpoint paths, dataset location, batch size, learning rate, and GPU memory requirements before running. The project also includes `config/llama3-8B/train_config.yaml` for a separate LoRA setup.
 
-Running this command loads the finetuned model and let's you have a conversation with it in the commandline.
+The repository's current ready-to-use configuration targets **Llama 3 8B**. Older experimental Mistral references have been omitted because corresponding Mistral configurations are not currently provided.
 
-## ⚙️ Hardware Requirements
+## Chat with your AI clone
 
-| GPU                | VRAM     | Notes                                                      |
-| ------------------ | -------- | ---------------------------------------------------------- |
-| RTX 4090 × 2       | 24 GB each | Used for all fine-tuning and inference in this project     |
-| RTX 3090           | 24 GB     | Fully supports Llama 3 fine-tuning                         |
-| RTX 4070 / 4080    | 16–20 GB  | Recommended with QLoRA for smaller models                  |
-| < 16 GB GPUs       | —         | Use quantization or reduce batch size and context length   |
+After preparing a compatible fine-tuned **full-model checkpoint**, run the WhatsApp-style app:
 
+```bash
+conda activate AICLONE
+python chat_app.py --config config/llama3-8B/inference_config.yaml
+```
 
-## 💡 Tips & FAQ
+Open **http://localhost:7860** in your browser if the app is running on your own machine.
 
-### 🧩 The model isn’t learning my tone!
-Try increasing the number of **epochs** in `config/llama3/qlora_train_config.yaml`.
+### Using a remote GPU/server
 
----
+If the app runs on a remote machine, keep it listening on `127.0.0.1` and connect through an SSH tunnel **from your laptop**:
 
-### 📜 The preprocessing script fails.
-Adjust the **regex** pattern in `prepare_data.py` to match your region’s WhatsApp export format  
-(e.g., `DD/MM/YYYY` vs. `MM/DD/YYYY`).
+```bash
+ssh -N -L 7860:127.0.0.1:7860 user@remote-host
+```
 
----
+Then open **http://localhost:7860** on your laptop. Alternatively, use **VS Code → Ports → Forward a Port** and enter `7860`. You may need your institution's SSH gateway if the GPU host cannot be reached directly.
 
-### 👥 Can I include group chats?
-Currently **not supported**.  
-If you’d like to include them, you’ll need to modify the preprocessing logic to handle multi-user conversations.
+### Local inference configuration
 
----
+`config/llama3-8B/inference_config.yaml` and the private persona prompt are intentionally excluded from Git. Create them locally and adjust the paths to your own checkpoint:
 
-### 🌍 My chats are not in English.
-Fine-tuning works best with **English-language** data.  
-If your chats are in another language, consider adjusting tokenization and training parameters for better results.
-But I tried in french and still works well.
+```yaml
+# config/llama3-8B/inference_config.yaml
+model:
+  _component_: torchtune.models.llama3.llama3_8b
 
----
+tokenizer:
+  _component_: torchtune.models.llama3.llama3_tokenizer
+  path: model/llama3-8B/original/tokenizer.model
 
-## 🧪 Common Notes
+checkpointer:
+  _component_: torchtune.utils.FullModelMetaCheckpointer
+  checkpoint_dir: model/finetune_checkpoint_8B
+  checkpoint_files: [meta_model_3.pt]
+  output_dir: model/finetune_checkpoint_8B
+  model_type: LLAMA3
 
-- After training, experiment with **temperature** and **top_k** in your `inference_config.yaml`:
+device: cuda
+dtype: fp16
+seed: 42
+offload: true
+quantizer: null
+max_seq_len: 8192
+max_new_tokens: 512
+temperature: 0.8
+top_k: 50
+system_prompt_file: data/persona/system_prompt.txt
+```
 
-  | Parameter | Effect |
-  | ---------- | ------- |
-  | `temperature = 0.2` | Factual & consistent replies |
-  | `temperature ≥ 0.7` | More creative & expressive replies |
+Save your persona instructions at `data/persona/system_prompt.txt`. The example assumes `meta_model_3.pt` is a full-model checkpoint already available in `model/finetune_checkpoint_8B/`; adapt it if your training run produced a different filename or only LoRA adapters. The model checkpoint and raw chat data are **not included** in the public repository.
 
-- Longer chat histories help the model capture your full communication style.  
+## Hardware and compatibility
 
-## Common Issues / Notes
-* After training, adjust temperature and top_k parameters in the ```inference_config.yaml``` file. I found a temperature of 0.2 and top_k of 10000 to work well for me. 
-* Finetuning works best with English chats. If your chats are in another language, you may need to adjust the preprocessing and training parameters accordingly.
+A GPU with enough VRAM for Llama 3 8B inference is required. Memory use depends on precision, quantization, context length, and the training configuration. QLoRA training also requires a supported GPU/CUDA setup; the amount of free memory matters more than the GPU model name alone.
+
+This project was developed using an older, customised torchtune API. In particular, the streaming backend is tailored to decoder/cache behaviour from that version. If something breaks after upgrading PyTorch or torchtune, verify the original environment and dependency versions before changing the application.
+
+## Troubleshooting
+
+**`FileNotFoundError` for `config/llama3/inference_config.yaml`**  
+The folder is `config/llama3-8B/`, not `config/llama3/`. The inference YAML is private and must exist locally.
+
+**`TransformerDecoder` has no `caches_are_enabled` or `reset_caches`**  
+These methods are absent from the customised torchtune installation. Use the compatible streaming `chat_app.py` and do not assume newer cache-management APIs are present.
+
+**Browser cannot reach `localhost:7860`**  
+Confirm the app is running on the GPU host and forward port `7860` to the correct machine. The SSH tunnel must be started on your laptop (or use VS Code port forwarding).
+
+**Model responds differently from your writing style**  
+Review the quality and balance of the training conversations, the persona prompt, and the sampling temperature. Increasing the epoch count alone can overfit the training data.
+
+## Notes
+
+- The public repository contains source code, not the personal conversation exports or trained model checkpoint.
+- The existing demo GIF reflects an earlier interface; a new demo can be recorded from the streaming app.
+- This is an experimental personal-model project, not a production messaging or identity-authentication service.

@@ -41,7 +41,7 @@ resume_from_checkpoint: False
 dataset:
   _component_: torchtune.datasets.chat_dataset
   source: data/preprocessed
-  max_seq_len: 2048
+  max_seq_len: 4096
   conversation_style: sharegpt
   train_on_input: False
   split: train
@@ -63,7 +63,7 @@ loss:
   _component_: torch.nn.CrossEntropyLoss
 
 # Training
-epochs: 10
+epochs: 4
 max_steps_per_epoch: null
 gradient_accumulation_steps: 4
 compile: False
