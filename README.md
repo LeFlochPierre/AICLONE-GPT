@@ -16,10 +16,10 @@ AICLONE-GPT trains a conversational language model on exported WhatsApp messages
 ## Demo
 
 <p align="center">
-  <img src="imgs/ChatwithAICLONE-GPT.gif" alt="AICLONE-GPT chat demo" width="80%">
+  <a href="demo/media/aiclone-demo-casual.mp4">
+    <img src="demo/media/aiclone-demo-casual.webp" alt="AICLONE-GPT demo: live chats, creativity controls, and Clone yourself" width="80%">
+  </a>
 </p>
-
-*Existing demo recording; the current chat interface has since been updated with streaming responses and additional controls.*
 
 ## Features
 
@@ -174,5 +174,4 @@ Review the quality and balance of the training conversations, the persona prompt
 ## Notes
 
 - The public repository contains source code, not the personal conversation exports or trained model checkpoint.
-- The existing demo GIF reflects an earlier interface; a new demo can be recorded from the streaming app.
 - This is an experimental personal-model project, not a production messaging or identity-authentication service.
